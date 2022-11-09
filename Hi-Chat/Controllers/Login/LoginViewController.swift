@@ -75,12 +75,32 @@ class LoginViewController: UIViewController {
         title = "Login page"
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(tapOnRegistration))
+
+        loginButton.addTarget(self, action: #selector(validateField), for: .touchUpInside)
+
+//        emailField.delegate = self
+//        passwordField.delegate = self
+
         //logo image
         view.addSubview(scrollView)
         scrollView.addSubview(imageView)
         scrollView.addSubview(emailField)
         scrollView.addSubview(passwordField)
         scrollView.addSubview(loginButton)
+    }
+
+    @objc private func validateField(){
+        guard let email = emailField.text, let password = passwordField.text,
+              !email.isEmpty && !password.isEmpty && password.count >= 6 else{
+              alertLoginError()
+            return
+        }
+    }
+
+    private func alertLoginError(){
+        let alert = UIAlertController(title: "Woops", message: "Please enter all information", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+        present(alert, animated: true)
     }
 
     override func viewDidLayoutSubviews() {
