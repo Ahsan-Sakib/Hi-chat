@@ -27,6 +27,33 @@ final class Hi_ChatUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
+        let emailAddressTextField = app/*@START_MENU_TOKEN@*/.textFields["Email Address..."]/*[[".scrollViews.textFields[\"Email Address...\"]",".textFields[\"Email Address...\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
+
+        XCTAssertTrue(emailAddressTextField.exists)
+        emailAddressTextField.tap()
+        emailAddressTextField.typeText("abc in absdfhsdfhds")
+
+        let passwordTextField = app.secureTextFields["Password...."]
+        XCTAssertTrue(passwordTextField.exists)
+        passwordTextField.tap()
+        passwordTextField.typeText("sfbs")
+
+        let loginButton = app.buttons["Log In"]
+        XCTAssertTrue(loginButton.exists)
+        app.buttons["Log In"].tap()
+
+        let alertDismiss = app.buttons["Dismiss"]
+        XCTAssertTrue(alertDismiss.exists)
+
+        emailAddressTextField.tap()
+        emailAddressTextField.clearAndEnterText(text: "")
+        emailAddressTextField.typeText("abc@gmail.com")
+
+        passwordTextField.tap()
+        passwordTextField.typeText("abc123")
+
+        app.buttons["Log In"].tap()
+
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
@@ -37,5 +64,24 @@ final class Hi_ChatUITests: XCTestCase {
                 XCUIApplication().launch()
             }
         }
+    }
+}
+
+
+extension XCUIElement {
+    /**
+     Removes any current text in the field before typing in the new value
+     - Parameter text: the text to enter into the field
+     */
+    func clearAndEnterText(text: String) {
+        guard let stringValue = self.value as? String else {
+            XCTFail("Tried to clear and enter text into a non string value")
+            return
+        }
+
+        self.tap()
+        let deleteString = String(repeating: XCUIKeyboardKey.delete.rawValue, count: stringValue.count)
+        self.typeText(deleteString)
+        self.typeText(text)
     }
 }
