@@ -39,6 +39,7 @@ class LoginViewController: UIViewController {
                             height: 0)
         field.leftView = UIView(frame: uiView)
         field.leftViewMode = .always
+        field.returnKeyType = .continue
         return field
     }()
 
@@ -58,6 +59,7 @@ class LoginViewController: UIViewController {
         field.leftView = UIView(frame: uiView)
         field.leftViewMode = .always
         field.isSecureTextEntry = true
+        field.returnKeyType = .done
         return field
     }()
 
@@ -76,10 +78,10 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(tapOnRegistration))
 
-        loginButton.addTarget(self, action: #selector(validateField), for: .touchUpInside)
+        loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
 
-//        emailField.delegate = self
-//        passwordField.delegate = self
+        emailField.delegate = self
+        passwordField.delegate = self
 
         //logo image
         view.addSubview(scrollView)
@@ -89,7 +91,10 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(loginButton)
     }
 
-    @objc private func validateField(){
+    @objc private func loginButtonTapped(){
+        emailField.resignFirstResponder()
+        passwordField.resignFirstResponder()
+
         guard let email = emailField.text, let password = passwordField.text,
               !email.isEmpty && !password.isEmpty && password.count >= 6 else{
               alertLoginError()
@@ -133,5 +138,24 @@ class LoginViewController: UIViewController {
         let registrationVC = RegistrationViewController()
         registrationVC.title = "Create Account"
         self.navigationController?.pushViewController(registrationVC, animated: true)
+    }
+
+    private func tapOnLoginButton(){
+        print("tap on registration")
+        let registrationVC = RegistrationViewController()
+        registrationVC.title = "Create Account"
+        self.navigationController?.pushViewController(registrationVC, animated: true)
+    }
+}
+
+
+extension LoginViewController: UITextFieldDelegate{
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == emailField{
+            passwordField.becomeFirstResponder()
+        }else if textField == passwordField{
+            loginButtonTapped()
+        }
+        return true
     }
 }
