@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ConversationViewController: UIViewController {
 
@@ -17,13 +18,17 @@ class ConversationViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        let isLoggedIn = UserDefaults.standard.bool(forKey: "logged_in")
-        if (!isLoggedIn){
-            let loginVC = LoginViewController()
-            let navController = UINavigationController(rootViewController: loginVC) // a new view controller with navigation bar
-            navController.modalPresentationStyle = .fullScreen
-            self.present(navController, animated: false)
-        }
+        validateAuth()
+    }
+
+   private func validateAuth(){
+      // let isLoggedIn = UserDefaults.standard.bool(forKey: "logged_in")
+       if FirebaseAuth.Auth.auth().currentUser == nil{
+           let loginVC = LoginViewController()
+           let navController = UINavigationController(rootViewController: loginVC) // a new view controller with navigation bar
+           navController.modalPresentationStyle = .fullScreen
+           self.present(navController, animated: false)
+       }
     }
 }
 

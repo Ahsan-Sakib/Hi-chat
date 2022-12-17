@@ -32,3 +32,11 @@ extension UIView{
         return self.frame.size.width + self.frame.origin.x
     }
 }
+
+extension String{
+    public func flatEmail()->String{
+        let email = self.replacingOccurrences(of: "@", with: "-")
+        let newEmail = email.replacingOccurrences(of: ".", with: "-")
+        return newEmail
+    }
+}

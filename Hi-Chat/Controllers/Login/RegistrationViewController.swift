@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class RegistrationViewController: UIViewController {
 
@@ -17,7 +18,7 @@ class RegistrationViewController: UIViewController {
 
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person")
+        imageView.image = UIImage(systemName: "person.circle")
         imageView.layer.masksToBounds = false
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
@@ -137,9 +138,36 @@ class RegistrationViewController: UIViewController {
 
     @objc private func validateField(){
         guard let email = emailField.text, let password = passwordField.text,
-              !email.isEmpty && !password.isEmpty && password.count >= 6 else{
-              alertLoginError()
+              let firstName = firstNameField.text, let lastName = lastNameField.text,
+              !email.isEmpty && !password.isEmpty && !firstName.isEmpty && !lastName.isEmpty && password.count >= 6 else{
+            alertRegistrationError()
             return
+        }
+
+         // MARK:-  check user exist or not
+
+        DatabaseManager.shared.userExist(with: email.flatEmail()) { [weak self] isExist in
+            if isExist{
+                self?.alertRegistrationError(message: "User already exist")
+                return
+            }
+
+            // MARK:-  Firebase insert user
+            DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email.flatEmail()))
+
+            // MARK:-  Firebase create user
+
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) {[weak self] result, error in
+                guard let strongSelf = self else {
+                    return
+                }
+                guard let user = result?.user, error == nil else {
+                    return
+                }
+
+                print(user)
+                strongSelf.navigationController?.dismiss(animated: true)
+            }
         }
     }
 
@@ -148,8 +176,8 @@ class RegistrationViewController: UIViewController {
         presentationPhotoActionSheet()
     }
 
-    private func alertLoginError(){
-        let alert = UIAlertController(title: "Woops", message: "Please enter all information", preferredStyle: .alert)
+    private func alertRegistrationError(message:String = "Please enter all information" ){
+        let alert = UIAlertController(title: "Woops", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         present(alert, animated: true)
     }
@@ -227,7 +255,7 @@ extension RegistrationViewController: UIImagePickerControllerDelegate,UINavigati
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        imageView.image = info[UIImagePickerController.InfoKey.editedImage] as! UIImage
+        imageView.image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage
         print(info)
         picker.dismiss(animated: true)
     }
