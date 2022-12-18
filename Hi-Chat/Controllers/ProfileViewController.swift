@@ -9,10 +9,15 @@ import UIKit
 
 class ProfileViewController: UIViewController {
 
+    @IBOutlet var tableView:UITableView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         // Do any additional setup after loading the view.
+        tableView.delegate = self
+        tableView.dataSource = self
     }
     
 
@@ -26,4 +31,17 @@ class ProfileViewController: UIViewController {
     }
     */
 
+}
+
+
+extension ProfileViewController:UITableViewDelegate,UITableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! UITableViewCell
+        cell.textLabel?.text = "logout"
+        return cell
+    }
 }

@@ -43,5 +43,7 @@ struct ChatAppUser{
     let firstName: String
     let lastName: String
     let emailAddress: String
-    // let profilePictureUrl: String
+    var safeEmail: String{
+        return emailAddress.flatEmail()
+    }
 }
