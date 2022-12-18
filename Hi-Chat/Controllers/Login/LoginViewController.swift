@@ -110,6 +110,7 @@ class LoginViewController: UIViewController {
                 return
             }
             guard let user = result?.user, error == nil else {
+                strongSelf.alertLoginError(message:(error as? String ?? "Error") )
                 return
             }
 
@@ -119,8 +120,8 @@ class LoginViewController: UIViewController {
     }
 
 
-    private func alertLoginError(){
-        let alert = UIAlertController(title: "Woops", message: "Please enter all information", preferredStyle: .alert)
+    private func alertLoginError(message:String = "Please enter all information"){
+        let alert = UIAlertController(title: "Woops", message:message , preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         present(alert, animated: true)
     }

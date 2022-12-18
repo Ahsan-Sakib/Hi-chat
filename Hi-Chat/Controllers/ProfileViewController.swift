@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ProfileViewController: UIViewController {
 
@@ -35,6 +36,18 @@ class ProfileViewController: UIViewController {
 
 
 extension ProfileViewController:UITableViewDelegate,UITableViewDataSource{
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        do{
+           try FirebaseAuth.Auth.auth().signOut()
+            let loginVC = LoginViewController()
+            let navController = UINavigationController(rootViewController: loginVC) // a new view controller with navigation bar
+            navController.modalPresentationStyle = .fullScreen
+            self.present(navController, animated: false)
+        }catch let error as NSError {
+            print(error)
+        }
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
